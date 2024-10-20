@@ -8,6 +8,9 @@ apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: "androidx.navigation.safeargs"
 apply plugin: 'kotlin-parcelize'
 
+//Aplica o detekt no módulo
+apply from: '../config/detekt/detekt.gradle'
+
 android {
     compileSdkVersion 34
     defaultConfig {

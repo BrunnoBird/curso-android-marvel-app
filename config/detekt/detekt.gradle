@@ -1,0 +1,41 @@
+apply plugin: "io.gitlab.arturbosch.detekt"
+
+//Configura para que sempre que buildar ele rode o detekt antes
+project.afterEvaluate {
+    tasks.named("preBuild") {
+        dependsOn("detekt")
+    }
+}
+
+detekt {
+    toolVersion = "$detekt_version"
+
+    // Collect all input directories from subprojects for analysis
+    def inputDirFiles = []
+    rootProject.subprojects.each { module ->
+        inputDirFiles << "$module.projectDir/src/main/java"
+    }
+
+    // Use the latest approach for setting input sources
+    source = files(inputDirFiles)  // 'sourceSets' is no longer used; replace it with 'source'
+
+    // Set Detekt configuration file
+    config.setFrom(file("$rootDir/config/detekt/detekt.yml"))
+    autoCorrect = true
+
+    // Updated reporting configuration
+    reports {
+        xml {
+            required.set(true)  // Enable XML report
+            outputLocation.set(layout.buildDirectory.file("reports/detekt/detekt.xml"))  // Updated output path
+        }
+        html {
+            required.set(true)  // Enable HTML report
+            outputLocation.set(layout.buildDirectory.file("reports/detekt/detekt.html"))  // Updated output path
+        }
+        txt {
+            required.set(true)  // Enable TXT report
+            outputLocation.set(layout.buildDirectory.file("reports/detekt/detekt.txt"))  // Updated output path
+        }
+    }
+}
